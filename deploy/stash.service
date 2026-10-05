@@ -1,0 +1,22 @@
+[Unit]
+Description=Stash home file storage
+After=network.target
+
+[Service]
+Type=simple
+User=stash
+Group=stash
+WorkingDirectory=/opt/stash
+EnvironmentFile=/opt/stash/.env
+ExecStart=/opt/stash/.venv/bin/python -m stash serve
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/data
+
+[Install]
+WantedBy=multi-user.target

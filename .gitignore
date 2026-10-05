@@ -1,0 +1,55 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Packaging and build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+
+# Test, lint, type-check, and coverage caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.pyright/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+
+# Runtime data (user files and SQLite)
+data/
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+*~
+
+# IDE settings
+.idea/
+.vscode/
+
+# OS metadata
+.DS_Store
+Thumbs.db

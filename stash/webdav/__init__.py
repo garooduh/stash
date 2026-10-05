@@ -1,0 +1,1 @@
+"""WsgiDAV integration."""

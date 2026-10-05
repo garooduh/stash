@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f5fb">
+  <title>Stash</title>
+  <link rel="icon" type="image/png" sizes="512x512" href="/static/favicon.png?v=2">
+  <script>
+    try {
+      const theme = localStorage.getItem("stash-theme");
+      if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+    } catch (_) {}
+  </script>
+  <link rel="stylesheet" href="/static/style.css?v=11">
+  <script src="/static/app.js?v=13" defer></script>
+</head>
+<body>
+  <section id="login-view" class="login-shell" hidden>
+    <label class="login-theme">Тема
+      <select class="theme-select" aria-label="Тема оформления">
+        <option value="system">Системная</option><option value="light">Светлая</option><option value="dark">Тёмная</option>
+      </select>
+    </label>
+    <form id="login-form" class="login-card">
+      <div class="brand login-brand">
+        <span class="brand-mark login-mark"><img src="/static/logo.png?v=2" alt=""></span>
+        <h1>Stash</h1>
+      </div>
+      <p>Ваши файлы. Ваш сервер.</p>
+      <label for="username">Имя пользователя</label>
+      <input id="username" name="username" autocomplete="username" required>
+      <label for="password">Пароль</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required>
+      <button class="button primary wide" type="submit">Войти</button>
+      <div id="login-error" class="error" role="alert"></div>
+    </form>
+  </section>
+
+  <div id="app-view" class="app-shell" hidden>
+    <div id="sidebar-backdrop" class="sidebar-backdrop" hidden></div>
+    <aside id="sidebar" class="sidebar" aria-label="Навигация">
+      <div class="sidebar-header">
+        <div class="brand"><span class="brand-mark small"><img src="/static/logo.png?v=2" alt=""></span><span>Stash</span></div>
+        <button id="sidebar-close" class="icon-button sidebar-close" type="button" aria-label="Закрыть меню" title="Закрыть меню">×</button>
+      </div>
+      <nav class="side-nav" aria-label="Разделы">
+        <button id="files-nav" class="side-link active" type="button" aria-current="page">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+          <span>Мои файлы</span>
+        </button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="storage-card" aria-label="Использование хранилища">
+          <div class="storage-title"><span>Хранилище</span><span id="storage-percent">0%</span></div>
+          <div class="progress-track"><div id="storage-progress" class="progress-fill"></div></div>
+          <div id="storage-summary" class="storage-caption">Загрузка данных…</div>
+        </div>
+        <button id="settings-button" class="side-link" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.07-1.85 1.85-.07-.06A1.7 1.7 0 0 0 16 18.4a1.7 1.7 0 0 0-1 1.56V20H9v-.04a1.7 1.7 0 0 0-1-1.56 1.7 1.7 0 0 0-1.88.34l-.07.06-1.85-1.85.06-.07A1.7 1.7 0 0 0 4.6 15 1.7 1.7 0 0 0 3.04 14H3v-4h.04A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.88L4.2 7.05 6.05 5.2l.07.06A1.7 1.7 0 0 0 8 5.6 1.7 1.7 0 0 0 9 4.04V4h6v.04A1.7 1.7 0 0 0 16 5.6a1.7 1.7 0 0 0 1.88-.34l.07-.06 1.85 1.85-.06.07A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.56 1H21v4h-.04A1.7 1.7 0 0 0 19.4 15z"/></svg>
+          <span>Настройки</span>
+        </button>
+        <button id="logout-button" class="side-link" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4M14 16l4-4-4-4M8 12h10"/></svg>
+          <span>Выйти</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <button id="sidebar-open" class="icon-button sidebar-open" type="button" aria-label="Открыть меню" title="Открыть меню">☰</button>
+        <nav id="breadcrumbs" class="breadcrumbs" aria-label="Текущая папка"></nav>
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg>
+          <input id="search-input" type="search" placeholder="Поиск файлов" aria-label="Поиск по имени файлов и папок" autocomplete="off">
+          <button id="search-clear" class="search-clear" type="button" aria-label="Очистить поиск" title="Очистить поиск" hidden>×</button>
+        </div>
+        <div class="top-actions">
+          <button id="new-folder-button" class="button secondary" type="button" title="Новая папка" aria-label="Новая папка">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM12 11v6m-3-3h6"/></svg><span>Новая папка</span>
+          </button>
+          <div id="upload-menu" class="upload-menu">
+            <button id="upload-button" class="button primary upload-button" type="button" title="Загрузить файлы или папку" aria-label="Загрузить файлы или папку" aria-haspopup="menu" aria-expanded="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m-4 4 4-4 4 4M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg><span>Загрузить</span><svg class="upload-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg>
+            </button>
+            <div id="upload-menu-items" class="upload-menu-items" role="menu" hidden>
+              <button id="upload-files-option" type="button" role="menuitem">Файлы</button>
+              <button id="upload-folder-option" type="button" role="menuitem">Папку</button>
+            </div>
+          </div>
+          <input id="upload-input" type="file" multiple aria-label="Загрузить файлы" hidden>
+          <input id="upload-folder-input" type="file" webkitdirectory multiple aria-label="Загрузить папку" hidden>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <div class="page-heading">
+          <div><h1 id="page-title">Мои файлы</h1><p id="page-subtitle">Файлы на вашем сервере</p></div>
+          <div class="mobile-storage" id="storage-summary-inline"></div>
+        </div>
+        <section id="upload-panel" class="upload-panel" aria-label="Загрузки" hidden>
+          <div class="upload-panel-head"><strong>Загрузки</strong><button id="upload-dismiss" class="icon-button" type="button" aria-label="Скрыть завершённые загрузки" title="Скрыть завершённые загрузки">×</button></div>
+          <div id="upload-summary" class="upload-summary" role="status"></div>
+          <div id="upload-overall-progress" class="progress-track upload-overall-progress" role="progressbar" aria-label="Общий прогресс загрузки" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="upload-overall-fill" class="progress-fill"></div></div>
+          <div id="upload-list" class="upload-list"></div>
+        </section>
+        <div id="notice" class="notice" role="status" hidden></div>
+        <div class="file-toolbar">
+          <div class="file-filters">
+            <label class="filter-select"><span class="filter-label">Тип</span>
+              <select id="type-filter" aria-label="Тип файлов"><option value="all">Все</option><option value="folder">Папки</option><option value="file">Файлы</option></select>
+            </label>
+            <label class="filter-select"><span class="filter-label">Сортировка</span>
+              <select id="sort-select" aria-label="Сортировка"><option value="name">По названию</option><option value="modified">Недавно изменённые</option><option value="size">По размеру</option></select>
+            </label>
+          </div>
+          <div class="view-switch" role="group" aria-label="Вид файлов">
+            <button id="list-view-button" type="button" aria-label="Список" title="Список" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg></button>
+            <button id="grid-view-button" type="button" aria-label="Плитка" title="Плитка" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg></button>
+          </div>
+        </div>
+        <section id="file-panel" class="file-panel" aria-label="Файлы">
+          <div class="file-head"><span>Название</span><span>Размер</span><span>Изменён</span><span></span></div>
+          <div id="file-list" class="file-list"></div>
+        </section>
+      </main>
+    </div>
+    <div id="drop-overlay" class="drop-overlay" hidden><div><strong>Отпустите файлы или папки для загрузки</strong><span>Они появятся в текущей папке</span></div></div>
+  </div>
+
+  <dialog id="action-dialog" class="modal action-dialog" aria-labelledby="action-title">
+    <form id="action-form">
+      <div class="dialog-head"><h2 id="action-title"></h2><button id="action-close" class="icon-button" type="button" aria-label="Закрыть" title="Закрыть">×</button></div>
+      <p id="action-description" class="dialog-description"></p>
+      <label id="action-field-label" for="action-input"></label>
+      <input id="action-input" autocomplete="off">
+      <div id="action-error" class="error" role="alert"></div>
+      <div class="dialog-actions"><button id="action-cancel" class="button secondary" type="button">Отмена</button><button id="action-submit" class="button primary" type="submit"></button></div>
+    </form>
+  </dialog>
+
+  <dialog id="settings-dialog" class="modal settings-dialog" aria-labelledby="settings-title">
+    <div class="dialog-head"><div><div class="eyebrow">ПОДКЛЮЧЕНИЯ</div><h2 id="settings-title">WebDAV-токены</h2></div><button id="close-settings" class="icon-button" type="button" aria-label="Закрыть" title="Закрыть">×</button></div>
+    <p class="dialog-description">Для WebDAV используйте отдельный токен вместо основного пароля.</p>
+    <div class="dav-address">Адрес сервера <code id="dav-url"></code></div>
+    <form id="token-form" class="token-form"><label for="token-name">Новое устройство</label><div><input id="token-name" placeholder="Например, ноутбук" required maxlength="255"><button class="button primary" type="submit">Создать</button></div></form>
+    <div id="new-token" class="new-token" hidden><strong>Сохраните токен сейчас: он больше не будет показан.</strong><code id="token-value"></code><button id="copy-token" class="button secondary" type="button">Копировать</button></div>
+    <div class="token-section-title">Активные токены</div>
+    <div id="token-list" class="token-list"></div>
+    <div class="settings-footer"><label>Тема
+      <select class="theme-select" aria-label="Тема оформления"><option value="system">Системная</option><option value="light">Светлая</option><option value="dark">Тёмная</option></select>
+    </label></div>
+  </dialog>
+</body>
+</html>
